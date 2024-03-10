@@ -8,6 +8,6 @@ public static class DateExtension
     {
         PersianCalendar persianCalendar = new PersianCalendar();
         return
-            $"{persianCalendar.GetYear(datetime)}/{persianCalendar.GetMonth(datetime)}/{persianCalendar.GetDayOfMonth(datetime)}-{persianCalendar.GetHour(datetime)}:{persianCalendar.GetMinute(datetime)}";
+            $"{persianCalendar.GetYear(datetime)}/{persianCalendar.GetMonth(datetime)}/{persianCalendar.GetDayOfMonth(datetime)}-{persianCalendar.GetHour(datetime).ToString().PadLeft(2, '0')}:{persianCalendar.GetMinute(datetime).ToString().PadLeft(2, '0')}";
     }
 }

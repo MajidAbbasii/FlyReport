@@ -43,10 +43,11 @@ public class FlyWindowsService : ServiceBase
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<Response>(content);
-                var stringBuilder = new StringBuilder();
+                StringBuilder stringBuilder;
                 await using (var dbContext = new AppDbContext())
                 {
                     await dbContext.Database.MigrateAsync();
+                    stringBuilder = new StringBuilder();
                     foreach (var pricedItinerary in result?.pricedItineraries)
                     {
                         var price = pricedItinerary.airItineraryPricingInfo.itinTotalFare.totalFare;
@@ -69,9 +70,8 @@ public class FlyWindowsService : ServiceBase
                         stringBuilder.AppendLine($"تعداد : {quantity}");
 
                         await dbContext.Flights.AddAsync(flight);
+                        await dbContext.SaveChangesAsync();
                     }
-
-                    await dbContext.SaveChangesAsync();
                 }
 
                 SendEmail(stringBuilder.ToString());
