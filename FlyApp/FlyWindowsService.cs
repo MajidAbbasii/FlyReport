@@ -21,7 +21,7 @@ public class FlyWindowsService : ServiceBase
         this.EventLog.Source = this.ServiceName;
         this.EventLog.Log = "Application";
 
-        _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromSeconds(300));
+        _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromSeconds(120));
     }
 
     protected override void OnStop()
@@ -44,7 +44,7 @@ public class FlyWindowsService : ServiceBase
                 var content = await response.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<Response>(content);
                 var stringBuilder = new StringBuilder();
-                using (var dbContext = new AppDbContext())
+                await using (var dbContext = new AppDbContext())
                 {
                     await dbContext.Database.MigrateAsync();
                     foreach (var pricedItinerary in result?.pricedItineraries)
@@ -52,6 +52,7 @@ public class FlyWindowsService : ServiceBase
                         var price = pricedItinerary.airItineraryPricingInfo.itinTotalFare.totalFare;
                         var date = pricedItinerary.originDestinationOptions[0].flightSegments[0].departureDateTime;
                         var quantity = pricedItinerary.originDestinationOptions[0].flightSegments[0].seatsRemaining;
+                        dbContext.ChangeTracker.Clear();
                         var theFlight = dbContext.Flights.FirstOrDefault(f => f.Date == date);
                         if (theFlight != null && theFlight.Price <= price)
                             continue;
