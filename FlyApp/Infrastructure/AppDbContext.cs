@@ -1,7 +1,7 @@
-using Microsoft.Data.Sqlite;
+using FlyApp.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace FlyApp;
+namespace FlyApp.Infrastructure;
 
 public class AppDbContext : DbContext
 {

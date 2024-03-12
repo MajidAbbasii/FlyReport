@@ -1,4 +1,4 @@
-namespace FlyApp;
+namespace FlyApp.Entities;
 
 public class Flight
 {

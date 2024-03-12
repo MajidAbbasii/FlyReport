@@ -2,6 +2,7 @@
 
 using System.ServiceProcess;
 using FlyApp;
+using FlyApp.Services;
 
 try
 {
@@ -9,7 +10,7 @@ try
     {
         Task.Run(() =>
         {
-            FlyWindowsService flyWindowsService = new FlyWindowsService();
+            var flyService = new FlyService();
         });
         while (true)
         {
@@ -21,7 +22,7 @@ try
         System.Environment.CurrentDirectory = new System.IO.FileInfo(typeof(Program).Assembly.Location).DirectoryName;
         ServiceBase[] ServicesToRun = new ServiceBase[]
         {
-            new FlyWindowsService()
+            new FlyService()
         };
         ServiceBase.Run(ServicesToRun);
     }

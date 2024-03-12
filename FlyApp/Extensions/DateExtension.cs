@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace FlyApp;
+namespace FlyApp.Extensions;
 
 public static class DateExtension
 {
