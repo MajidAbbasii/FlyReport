@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlyApp.Services;
 
-public class FlyService : ServiceBase
+public class FlyService
 {
     private readonly Timer _timer;
     private readonly EventLogger _eventLogger;
@@ -21,12 +21,7 @@ public class FlyService : ServiceBase
     public FlyService()
     {
         _eventLogger = new EventLogger("FlyService");
-        _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromSeconds(500));
-    }
-
-    protected override void OnStop()
-    {
-        _timer.Dispose();
+        _timer = new Timer(OnTimerElapsed, null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
     }
 
     private async void OnTimerElapsed(object state)
@@ -38,16 +33,14 @@ public class FlyService : ServiceBase
             await using (var dbContext = new AppDbContext())
             {
                 await dbContext.Database.MigrateAsync();
-                _eventLogger.LogError($"An error occurred:");
                 foreach (var pricedItinerary in result.pricedItineraries)
                 {
                     var price = pricedItinerary.airItineraryPricingInfo.itinTotalFare.totalFare;
                     var date = pricedItinerary.originDestinationOptions[0].flightSegments[0].departureDateTime;
                     var quantity = pricedItinerary.originDestinationOptions[0].flightSegments[0].seatsRemaining;
-
-                    var existingFlight = dbContext.Flights.FirstOrDefault(f => f.Date == date);
-                    if (existingFlight != null &&
-                        existingFlight.Price <= price)
+                    dbContext.ChangeTracker.Clear();
+                    var existingFlight = dbContext.Flights.Any(f => f.Date == date && f.Price <= price);
+                    if (existingFlight)
                         continue;
 
                     var newFlight = new Flight
