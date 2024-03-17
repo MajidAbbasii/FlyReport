@@ -39,10 +39,26 @@ public class FlyService
                     var date = pricedItinerary.originDestinationOptions[0].flightSegments[0].departureDateTime;
                     var quantity = pricedItinerary.originDestinationOptions[0].flightSegments[0].seatsRemaining;
                     dbContext.ChangeTracker.Clear();
-                    var existingFlight = dbContext.Flights.Any(f => f.Date == date && f.Price <= price);
-                    if (existingFlight)
-                        continue;
-
+                    Flight existingFlight = dbContext.Flights.FirstOrDefault(f => f.Date == date);
+                    if (existingFlight != null)
+                    {
+                        if (existingFlight.Price <= price)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            existingFlight.Price = price;
+                            await dbContext.SaveChangesAsync();
+                            
+                            emailBody.AppendLine($"تاریخ : {date.ToPersianDateTime()}");
+                            emailBody.AppendLine($"قیمت : {price:N0}");
+                            emailBody.AppendLine($"تعداد : {quantity}");
+                            
+                            continue;
+                        }
+                    }
+                    
                     var newFlight = new Flight
                     {
                         Price = price,
