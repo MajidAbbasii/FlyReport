@@ -63,7 +63,7 @@ public class FlyService
                     {
                         Price = price,
                         Date = date,
-                        Quantity = quantity
+                        Quantity = quantity ?? 0
                     };
 
                     dbContext.Flights.Add(newFlight);
@@ -91,7 +91,7 @@ public class FlyService
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Guid.NewGuid().ToString("N"));
             var response = await httpClient.PostAsync("https://api.flytoday.ir/api/V1/Flight/SearchAnytime",
                 new StringContent(
-                    "{\"pricingSourceType\":0,\"adultCount\":1,\"childCount\":0,\"infantCount\":0,\"travelPreference\":{\"cabinType\":\"Y\",\"maxStopsQuantity\":\"All\",\"airTripType\":\"OneWay\"},\"originDestinationInformations\":[{\"destinationLocationCode\":\"KIH\",\"destinationType\":\"1\",\"originLocationCode\":\"THR\",\"originType\":\"1\"}],\"isJalali\":true}",
+                    "{\"pricingSourceType\":0,\"adultCount\":1,\"childCount\":0,\"infantCount\":0,\"travelPreference\":{\"cabinType\":\"Y\",\"maxStopsQuantity\":\"All\",\"airTripType\":\"OneWay\"},\"originDestinationInformations\":[{\"destinationLocationCode\":\"MHD\",\"destinationType\":\"1\",\"originLocationCode\":\"THR\",\"originType\":\"1\"}],\"isJalali\":true}",
                     Encoding.UTF8, "application/json"));
 
             if (response.IsSuccessStatusCode)

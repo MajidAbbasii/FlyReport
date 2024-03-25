@@ -17,7 +17,7 @@ public class FlightSegment
     public string cabinClassName { get; set; }
     public string cabinClassNameFa { get; set; }
     public OperatingAirline operatingAirline { get; set; }
-    public int seatsRemaining { get; set; }
+    public int? seatsRemaining { get; set; }
     public bool isCharter { get; set; }
     public bool isReturn { get; set; }
     public string baggage { get; set; }
